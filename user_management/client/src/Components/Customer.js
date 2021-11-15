@@ -1,5 +1,4 @@
-import React from 'react';
-import CustomerDetail from './CustomerDetail';
+import React, { useState, useEffect } from 'react';
 import CustomerContainer from './CustomerContainer';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
@@ -10,8 +9,19 @@ import TableCell from '@material-ui/core/TableCell';
 import { withStyles } from '@material-ui/styles';
 
 const Customer = (props) => {
+  const [customersData, setCustomersData] = useState([]);
   const { classes } = props;
-  console.log(classes);
+
+  const callApi = async () => {
+    const response = await fetch('/api/customers');
+    const body = await response.json();
+    return body;
+  };
+
+  useEffect(() => {
+    callApi().then((data) => setCustomersData(data));
+  }, []);
+
   return (
     <Paper className={classes.root}>
       <Table className={classes.table}>
@@ -27,7 +37,7 @@ const Customer = (props) => {
         </TableHead>
 
         <TableBody>
-          {CustomerDetail.map((customerDetail, index) => (
+          {customersData.map((customerDetail, index) => (
             <CustomerContainer
               key={index}
               id={customerDetail.id}
